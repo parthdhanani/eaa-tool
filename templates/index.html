@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Accessibility check for SCORM courses · psidex</title>
+<meta name="description" content="Drop a SCORM package and get a WCAG 2.2 AA and EU Accessibility Act report, with a plain-language fix list and a remediation estimate. Analysed in memory, never stored.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f4f1ea; --ink:#1b1a16; --soft:#5f5c52; --rule:#dcd7c9;
+    --terra:#9a3b1f; --terra-soft:#9a3b1f14; --jade:#46605a; --panel:#ece7db;
+    --bad:#9a3b1f; --warn:#9a6a1f; --ok:#46605a;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
+  body{background:var(--paper);color:var(--ink);font-family:'Hanken Grotesk',sans-serif;
+    font-size:clamp(1rem,.96rem+.22vw,1.1rem);line-height:1.62;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:60rem;margin:0 auto;padding:0 clamp(1.3rem,5vw,3.4rem)}
+  a{color:var(--terra)}
+  ::selection{background:var(--terra);color:var(--paper)}
+  .skip{position:absolute;left:-999px;top:0;background:var(--terra);color:var(--paper);padding:.6rem 1rem;z-index:60}
+  .skip:focus{left:0}
+  :focus-visible{outline:2.5px solid var(--terra);outline-offset:3px;border-radius:2px}
+
+  header{border-bottom:1px solid var(--rule)}
+  header .wrap{display:flex;justify-content:space-between;align-items:baseline;min-height:58px;gap:1rem;flex-wrap:wrap}
+  .brand{font-family:'Newsreader',serif;font-weight:600;font-size:1.16rem}
+  .brand span{color:var(--terra)}
+  header nav{font-size:.92rem;color:var(--soft);display:flex;gap:1.3rem}
+  header nav a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--terra);padding-bottom:1px}
+
+  main{padding:clamp(2.4rem,6vw,4.5rem) 0 4rem}
+  .eyebrow{font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:1.1rem}
+  h1{font-family:'Newsreader',serif;font-weight:400;letter-spacing:-.015em;
+    font-size:clamp(2.1rem,1.3rem+3.4vw,3.7rem);line-height:1.04;margin-bottom:1.2rem;max-width:18ch}
+  h1 em{font-style:italic;color:var(--terra)}
+  .lede{color:var(--soft);font-size:1.16rem;max-width:50ch;margin-bottom:2.4rem}
+  .lede b{color:var(--ink);font-weight:600}
+
+  /* upload */
+  .drop{display:block;border:1.5px dashed var(--rule);border-radius:14px;background:var(--panel);
+    padding:clamp(2rem,5vw,3.2rem);text-align:center;cursor:pointer;transition:border-color .18s ease,background .18s ease;max-width:44rem}
+  .drop:hover,.drop.over{border-color:var(--terra);background:var(--terra-soft)}
+  .drop .big{font-family:'Newsreader',serif;font-size:1.5rem;margin-bottom:.4rem}
+  .drop .sub{color:var(--soft);font-size:1rem}
+  .drop input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
+  .fineprint{margin-top:1.3rem;font-size:.92rem;color:var(--soft);max-width:44rem}
+  .fineprint b{color:var(--ink);font-weight:600}
+
+  /* loading */
+  .loading{display:none;align-items:center;gap:1rem;margin-top:2rem;color:var(--soft);font-size:1.05rem}
+  .loading.on{display:flex}
+  .spin{width:1.1rem;height:1.1rem;border:2px solid var(--rule);border-top-color:var(--terra);border-radius:50%;animation:sp .7s linear infinite}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  .err{display:none;margin-top:1.6rem;padding:1rem 1.3rem;border-left:3px solid var(--bad);background:var(--terra-soft);color:var(--ink);max-width:44rem}
+  .err.on{display:block}
+
+  /* report */
+  .report{display:none}
+  .report.on{display:block;animation:rise .5s cubic-bezier(.2,.7,.2,1) both}
+  @keyframes rise{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:none}}
+  .filename{font-size:.92rem;color:var(--soft);font-family:'Hanken Grotesk';margin-bottom:.5rem}
+  .filename b{color:var(--ink)}
+
+  .scorerow{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,3rem);align-items:end;
+    padding-bottom:1.6rem;border-bottom:2px solid var(--ink);margin-bottom:1.6rem}
+  .score .num{font-family:'Newsreader',serif;font-weight:500;font-size:clamp(3.6rem,2rem+8vw,6.2rem);line-height:.85;letter-spacing:-.02em}
+  .score .num i{font-style:normal;font-size:.36em;color:var(--soft);font-weight:400}
+  .score .verdict{font-family:'Newsreader',serif;font-style:italic;font-size:1.3rem;margin-top:.5rem}
+  .v-compliant{color:var(--ok)} .v-minor{color:var(--jade)} .v-work{color:var(--warn)} .v-bad{color:var(--bad)}
+  .measure{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:1rem}
+  .measure i{display:block;height:100%;background:var(--terra);border-radius:3px;width:0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
+  .tally{display:flex;flex-wrap:wrap;gap:1.6rem 2.4rem}
+  .tally div{display:flex;flex-direction:column}
+  .tally .t-n{font-family:'Newsreader',serif;font-size:1.7rem;line-height:1}
+  .tally .t-n.bad{color:var(--bad)} .tally .t-n.warn{color:var(--warn)}
+  .tally .t-l{font-size:.86rem;color:var(--soft);margin-top:.2rem;text-transform:uppercase;letter-spacing:.07em}
+
+  .effort{font-family:'Newsreader',serif;font-style:italic;font-size:1.32rem;color:var(--terra);margin:0 0 2rem}
+  .effort b{font-style:normal;font-weight:600}
+
+  .seclabel{font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:1rem}
+  .crit{border-top:1px solid var(--rule)}
+  details.row{border-bottom:1px solid var(--rule)}
+  details.row summary{list-style:none;cursor:pointer;padding:1.05rem .2rem;display:grid;
+    grid-template-columns:auto auto 1fr auto;gap:.9rem;align-items:baseline}
+  details.row summary::-webkit-details-marker{display:none}
+  .sc{font-family:'Newsreader',serif;font-weight:600;font-size:1.08rem;min-width:3.4rem}
+  .lvl{font-size:.72rem;font-weight:700;letter-spacing:.05em;border:1px solid var(--rule);border-radius:999px;
+    padding:.12rem .5rem;color:var(--soft);align-self:center}
+  .cname{color:var(--ink)}
+  .cname .dot{display:inline-block;width:.5rem;height:.5rem;border-radius:50%;margin-right:.5rem;vertical-align:middle}
+  .dot.bad{background:var(--bad)} .dot.warn{background:var(--warn)}
+  .cnt{font-size:.9rem;color:var(--soft);white-space:nowrap}
+  .crit .body{padding:0 .2rem 1.2rem 3.4rem}
+  .fix{background:var(--terra-soft);border-left:2px solid var(--terra);padding:.7rem 1rem;margin-bottom:.9rem;font-size:.98rem}
+  .fix b{font-weight:600}
+  ul.items{list-style:none}
+  ul.items li{padding:.4rem 0;border-top:1px dotted var(--rule);font-size:.94rem;color:var(--soft)}
+  ul.items li code{font-family:'Newsreader',serif;font-style:italic;color:var(--ink)}
+  .loc{color:var(--ink);font-weight:600}
+
+  .clean{padding:1.6rem 0;font-family:'Newsreader',serif;font-style:italic;font-size:1.4rem;color:var(--ok)}
+  .disclaimer{margin-top:2.4rem;font-size:.9rem;color:var(--soft);max-width:50ch}
+  .again{margin-top:2rem}
+  .btn{display:inline-flex;align-items:center;min-height:46px;padding:0 1.3rem;border-radius:8px;font-weight:600;
+    font-size:1rem;text-decoration:none;border:1px solid var(--rule);color:var(--ink);background:transparent;cursor:pointer;font-family:inherit}
+  .btn:hover{border-color:var(--terra)}
+  footer{border-top:1px solid var(--rule);font-size:.86rem;color:var(--soft);padding:1.5rem 0 3rem}
+  footer a{color:var(--ink)}
+</style>
+</head>
+<body>
+<a href="#main" class="skip">Skip to main content</a>
+<header><div class="wrap">
+  <span class="brand">psidex <span>/</span> accessibility check</span>
+  <nav aria-label="Related"><a href="https://psidex.com">Portfolio</a><a href="https://github.com/parthdhanani/scorm-kit">scorm-kit</a></nav>
+</div></header>
+
+<main class="wrap" id="main">
+
+  <section id="upload">
+    <p class="eyebrow">SCORM · WCAG 2.2 AA · EU Accessibility Act</p>
+    <h1>Will your course <em>pass</em> an accessibility audit?</h1>
+    <p class="lede">Drop a SCORM package. You get a WCAG 2.2 AA report, the exact criteria at risk, a plain-language fix for each, and an honest estimate of the work to compliance. The <b>European Accessibility Act</b> has been in force since June 2025.</p>
+
+    <label class="drop" id="drop">
+      <span class="big">Drop a SCORM .zip here</span>
+      <span class="sub">or click to choose a file</span>
+      <input type="file" id="file" accept=".zip,application/zip" aria-label="SCORM package to analyse">
+    </label>
+    <p class="fineprint"><b>Nothing is stored.</b> Your package is analysed in memory and deleted the moment the report is built. This is static analysis, the cheap 80 percent. A signoff still needs a human audit and assistive-tech testing.</p>
+
+    <div class="loading" id="loading" aria-live="polite"><span class="spin" aria-hidden="true"></span> Analysing the package against WCAG 2.2 AA...</div>
+    <div class="err" id="err" role="alert"></div>
+  </section>
+
+  <section class="report" id="report" aria-live="polite">
+    <p class="filename">Report for <b id="r-name">course.zip</b></p>
+    <div class="scorerow">
+      <div class="score">
+        <div class="num"><span id="r-score">0</span><i>/100</i></div>
+        <div class="verdict" id="r-verdict">.</div>
+      </div>
+      <div>
+        <div class="measure"><i id="r-bar"></i></div>
+        <div class="tally">
+          <div><span class="t-n bad" id="r-block">0</span><span class="t-l">Blocking</span></div>
+          <div><span class="t-n warn" id="r-adv">0</span><span class="t-l">Advisory</span></div>
+          <div><span class="t-n" id="r-files">0</span><span class="t-l">HTML files</span></div>
+        </div>
+      </div>
+    </div>
+    <p class="effort" id="r-effort"></p>
+
+    <div id="r-detail">
+      <p class="seclabel">Criteria at risk</p>
+      <div class="crit" id="r-crit"></div>
+    </div>
+
+    <p class="disclaimer">Mapped to WCAG 2.2 success criteria. Levels A and AA are the bar EN 301 549 sets for the EU Accessibility Act. Static checks cannot judge colour contrast in images, caption accuracy, or whether alt text is actually meaningful, so treat a clean result as a strong floor, not a certificate.</p>
+    <p class="again"><button class="btn" id="again">Check another package</button></p>
+  </section>
+
+</main>
+
+<footer><div class="wrap">Built with <a href="https://github.com/parthdhanani/scorm-kit">scorm-kit</a>, the open-source SCORM build pipeline. By <a href="https://psidex.com">Parth Dhanani</a>.</div></footer>
+
+<script>
+  var drop = document.getElementById('drop');
+  var file = document.getElementById('file');
+  var loading = document.getElementById('loading');
+  var err = document.getElementById('err');
+  var report = document.getElementById('report');
+  var upload = document.getElementById('upload');
+
+  ['dragenter','dragover'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.add('over'); });
+  });
+  ['dragleave','drop'].forEach(function(e){
+    drop.addEventListener(e, function(ev){ ev.preventDefault(); drop.classList.remove('over'); });
+  });
+  drop.addEventListener('drop', function(ev){
+    if (ev.dataTransfer.files.length) { file.files = ev.dataTransfer.files; analyse(); }
+  });
+  file.addEventListener('change', function(){ if (file.files.length) analyse(); });
+
+  function verdictClass(v){
+    return v === 'compliant' ? 'v-compliant' : v === 'minor gaps' ? 'v-minor'
+         : v === 'work needed' ? 'v-work' : 'v-bad';
+  }
+  function effortText(min){
+    if (min <= 0) return '';
+    if (min < 60) return '<b>About ' + min + ' minutes</b> of fixes to clear these.';
+    var h = (min/60);
+    var label = h < 1.5 ? 'about an hour' : 'about ' + (Math.round(h*2)/2) + ' hours';
+    return '<b>Roughly ' + label + '</b> of focused work to WCAG 2.2 AA.';
+  }
+  function esc(s){ return String(s == null ? '' : s).replace(/[&<>"]/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]; }); }
+
+  function analyse(){
+    err.classList.remove('on'); report.classList.remove('on');
+    loading.classList.add('on');
+    var fd = new FormData(); fd.append('package', file.files[0]);
+    fetch('/scan', { method:'POST', body:fd })
+      .then(function(r){ return r.json().then(function(d){ return { ok:r.ok, d:d }; }); })
+      .then(function(res){
+        loading.classList.remove('on');
+        if (!res.ok) { err.textContent = res.d.error || 'Something went wrong.'; err.classList.add('on'); return; }
+        render(res.d);
+      })
+      .catch(function(){
+        loading.classList.remove('on');
+        err.textContent = 'Could not reach the analyser. Try again.'; err.classList.add('on');
+      });
+  }
+
+  function render(d){
+    document.getElementById('r-name').textContent = file.files[0].name;
+    document.getElementById('r-score').textContent = d.score;
+    var v = document.getElementById('r-verdict');
+    v.textContent = d.verdict; v.className = 'verdict ' + verdictClass(d.verdict);
+    document.getElementById('r-block').textContent = d.blocking;
+    document.getElementById('r-adv').textContent = d.advisory;
+    document.getElementById('r-files').textContent = d.files_scanned == null ? '-' : d.files_scanned;
+    document.getElementById('r-effort').innerHTML = effortText(d.remediation_minutes);
+
+    var crit = document.getElementById('r-crit');
+    var detailWrap = document.getElementById('r-detail');
+    crit.innerHTML = '';
+    if (!d.criteria.length) {
+      detailWrap.innerHTML = '<p class="clean">No WCAG issues found in static analysis. A strong floor. Book the human audit.</p>';
+    } else {
+      d.criteria.forEach(function(c){
+        var dot = c.severity === 'error' ? 'bad' : 'warn';
+        var items = c.items.map(function(it){
+          var loc = '<span class="loc">' + esc(it.file || '') + (it.line ? ':' + it.line : '') + '</span>';
+          var det = it.detail ? '  <code>' + esc(it.detail) + '</code>' : '';
+          return '<li>' + loc + ' · ' + esc(it.msg) + det + '</li>';
+        }).join('');
+        var n = c.items.length;
+        crit.insertAdjacentHTML('beforeend',
+          '<details class="row"><summary>' +
+            '<span class="sc">' + esc(c.wcag) + '</span>' +
+            '<span class="lvl">Level ' + esc(c.level) + '</span>' +
+            '<span class="cname"><span class="dot ' + dot + '"></span>' + esc(c.wcag_name) + '</span>' +
+            '<span class="cnt">' + n + ' ' + (n === 1 ? 'instance' : 'instances') + '</span>' +
+          '</summary><div class="body">' +
+            '<div class="fix"><b>Fix.</b> ' + esc(c.fix) + '</div>' +
+            '<ul class="items">' + items + '</ul>' +
+          '</div></details>');
+      });
+    }
+
+    upload.style.display = 'none';
+    report.classList.add('on');
+    requestAnimationFrame(function(){ document.getElementById('r-bar').style.width = d.score + '%'; });
+    window.scrollTo({ top: 0 });
+  }
+
+  document.getElementById('again').addEventListener('click', function(){
+    report.classList.remove('on'); err.classList.remove('on');
+    upload.style.display=''; file.value=''; window.scrollTo({ top: 0 });
+  });
+</script>
+</body>
+</html>
