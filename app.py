@@ -1,6 +1,15 @@
-from flask import Flask, request, jsonify, render_template
+import json
+import os
+import re
+import shutil
+import subprocess
+import sys
+import threading
+import time
+import uuid
 from pathlib import Path
-import uuid, os, sys, shutil, threading, time, subprocess, json, re
+
+from flask import Flask, jsonify, render_template, request
 
 sys.path.insert(0, os.path.dirname(__file__))
 import wcag_map
