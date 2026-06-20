@@ -7,12 +7,12 @@
 <meta name="description" content="Drop a SCORM package and get a WCAG 2.2 AA and EU Accessibility Act report, with a plain-language fix list and a remediation estimate. Analysed in memory, never stored.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;0,6..72,600;1,6..72,400;1,6..72,500&family=Hanken+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
   :root{
-    --paper:#f4f1ea; --ink:#1b1a16; --soft:#5f5c52; --rule:#dcd7c9;
-    --terra:#9a3b1f; --terra-soft:#9a3b1f14; --jade:#46605a; --panel:#ece7db;
-    --bad:#9a3b1f; --warn:#9a6a1f; --ok:#46605a;
+    --paper:#f6f5f3; --ink:#1c1b1a; --soft:#5c5955; --rule:#dcd9d5;
+    --terra:#1c1b1a; --terra-soft:#1c1b1a0d; --jade:#44423f; --panel:#ece9e6;
+    --bad:#8a2f22; --warn:#6b5d3f; --ok:#44423f;
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html{scroll-behavior:smooth}
@@ -28,16 +28,16 @@
 
   header{border-bottom:1px solid var(--rule)}
   header .wrap{display:flex;justify-content:space-between;align-items:baseline;min-height:58px;gap:1rem;flex-wrap:wrap}
-  .brand{font-family:'Newsreader',serif;font-weight:600;font-size:1.16rem}
+  .brand{font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:1.16rem}
   .brand span{color:var(--terra)}
   header nav{font-size:.92rem;color:var(--soft);display:flex;gap:1.3rem}
   header nav a{color:var(--ink);text-decoration:none;border-bottom:1px solid var(--terra);padding-bottom:1px}
 
   main{padding:clamp(2.4rem,6vw,4.5rem) 0 4rem}
   .eyebrow{font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:1.1rem}
-  h1{font-family:'Newsreader',serif;font-weight:400;letter-spacing:-.015em;
+  h1{font-family:'Hanken Grotesk',sans-serif;font-weight:400;letter-spacing:-.015em;
     font-size:clamp(2.1rem,1.3rem+3.4vw,3.7rem);line-height:1.04;margin-bottom:1.2rem;max-width:18ch}
-  h1 em{font-style:italic;color:var(--terra)}
+  h1 em{font-style:normal;font-weight:800;color:var(--ink)}
   .lede{color:var(--soft);font-size:1.16rem;max-width:50ch;margin-bottom:2.4rem}
   .lede b{color:var(--ink);font-weight:600}
 
@@ -45,7 +45,7 @@
   .drop{display:block;border:1.5px dashed var(--rule);border-radius:14px;background:var(--panel);
     padding:clamp(2rem,5vw,3.2rem);text-align:center;cursor:pointer;transition:border-color .18s ease,background .18s ease;max-width:44rem}
   .drop:hover,.drop.over{border-color:var(--terra);background:var(--terra-soft)}
-  .drop .big{font-family:'Newsreader',serif;font-size:1.5rem;margin-bottom:.4rem}
+  .drop .big{font-family:'Hanken Grotesk',sans-serif;font-size:1.5rem;margin-bottom:.4rem}
   .drop .sub{color:var(--soft);font-size:1rem}
   .drop input{position:absolute;width:1px;height:1px;opacity:0;overflow:hidden}
   .fineprint{margin-top:1.3rem;font-size:.92rem;color:var(--soft);max-width:44rem}
@@ -68,19 +68,19 @@
 
   .scorerow{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,3rem);align-items:end;
     padding-bottom:1.6rem;border-bottom:2px solid var(--ink);margin-bottom:1.6rem}
-  .score .num{font-family:'Newsreader',serif;font-weight:500;font-size:clamp(3.6rem,2rem+8vw,6.2rem);line-height:.85;letter-spacing:-.02em}
+  .score .num{font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:clamp(3.6rem,2rem+8vw,6.2rem);line-height:.85;letter-spacing:-.02em}
   .score .num i{font-style:normal;font-size:.36em;color:var(--soft);font-weight:400}
-  .score .verdict{font-family:'Newsreader',serif;font-style:italic;font-size:1.3rem;margin-top:.5rem}
+  .score .verdict{font-family:'Hanken Grotesk',sans-serif;font-style:normal;font-size:1.3rem;margin-top:.5rem}
   .v-compliant{color:var(--ok)} .v-minor{color:var(--jade)} .v-work{color:var(--warn)} .v-bad{color:var(--bad)}
   .measure{height:6px;background:var(--rule);border-radius:3px;overflow:hidden;margin-bottom:1rem}
   .measure i{display:block;height:100%;background:var(--terra);border-radius:3px;width:0;transition:width .8s cubic-bezier(.2,.7,.2,1)}
   .tally{display:flex;flex-wrap:wrap;gap:1.6rem 2.4rem}
   .tally div{display:flex;flex-direction:column}
-  .tally .t-n{font-family:'Newsreader',serif;font-size:1.7rem;line-height:1}
+  .tally .t-n{font-family:'Hanken Grotesk',sans-serif;font-size:1.7rem;line-height:1}
   .tally .t-n.bad{color:var(--bad)} .tally .t-n.warn{color:var(--warn)}
   .tally .t-l{font-size:.86rem;color:var(--soft);margin-top:.2rem;text-transform:uppercase;letter-spacing:.07em}
 
-  .effort{font-family:'Newsreader',serif;font-style:italic;font-size:1.32rem;color:var(--terra);margin:0 0 2rem}
+  .effort{font-family:'Hanken Grotesk',sans-serif;font-style:normal;font-size:1.32rem;color:var(--terra);margin:0 0 2rem}
   .effort b{font-style:normal;font-weight:600}
 
   .seclabel{font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:1rem}
@@ -89,7 +89,7 @@
   details.row summary{list-style:none;cursor:pointer;padding:1.05rem .2rem;display:grid;
     grid-template-columns:auto auto 1fr auto;gap:.9rem;align-items:baseline}
   details.row summary::-webkit-details-marker{display:none}
-  .sc{font-family:'Newsreader',serif;font-weight:600;font-size:1.08rem;min-width:3.4rem}
+  .sc{font-family:'Hanken Grotesk',sans-serif;font-weight:600;font-size:1.08rem;min-width:3.4rem}
   .lvl{font-size:.72rem;font-weight:700;letter-spacing:.05em;border:1px solid var(--rule);border-radius:999px;
     padding:.12rem .5rem;color:var(--soft);align-self:center}
   .cname{color:var(--ink)}
@@ -101,10 +101,10 @@
   .fix b{font-weight:600}
   ul.items{list-style:none}
   ul.items li{padding:.4rem 0;border-top:1px dotted var(--rule);font-size:.94rem;color:var(--soft)}
-  ul.items li code{font-family:'Newsreader',serif;font-style:italic;color:var(--ink)}
+  ul.items li code{font-family:'Hanken Grotesk',sans-serif;font-style:normal;color:var(--ink)}
   .loc{color:var(--ink);font-weight:600}
 
-  .clean{padding:1.6rem 0;font-family:'Newsreader',serif;font-style:italic;font-size:1.4rem;color:var(--ok)}
+  .clean{padding:1.6rem 0;font-family:'Hanken Grotesk',sans-serif;font-style:normal;font-size:1.4rem;color:var(--ok)}
   .disclaimer{margin-top:2.4rem;font-size:.9rem;color:var(--soft);max-width:50ch}
   .again{margin-top:2rem}
   .btn{display:inline-flex;align-items:center;min-height:46px;padding:0 1.3rem;border-radius:8px;font-weight:600;
