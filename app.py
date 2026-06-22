@@ -4,7 +4,6 @@ import re
 import shutil
 import subprocess
 import sys
-import threading
 import time
 import uuid
 from pathlib import Path
@@ -40,20 +39,6 @@ for _d in list(SESSIONS.iterdir()):
             shutil.rmtree(_d, ignore_errors=True)
     except Exception:
         pass
-
-
-def _cleanup_loop():
-    while True:
-        time.sleep(300)
-        cut = time.time() - MAX_AGE_S
-        for d in SESSIONS.iterdir():
-            try:
-                if d.is_dir() and d.stat().st_mtime < cut:
-                    shutil.rmtree(d, ignore_errors=True)
-            except Exception:
-                pass
-
-threading.Thread(target=_cleanup_loop, daemon=True).start()
 
 
 def _session_cap():
