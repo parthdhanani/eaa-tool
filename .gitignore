@@ -1,2 +1,5 @@
 __pycache__/
 *.pyc
+
+# code-review-graph index (local, do not commit)
+.code-review-graph/
