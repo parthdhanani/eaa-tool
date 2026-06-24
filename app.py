@@ -25,7 +25,7 @@ app.config['MAX_CONTENT_LENGTH'] = (MAX_FILE_MB + 10) * 1024 * 1024
 # Path to the scorm-kit CLI (the a11y engine). Override with SCORM_KIT env var.
 SCORM_KIT = os.environ.get(
     'SCORM_KIT',
-    str(Path.home() / 'AI_Space' / 'autonomous_lab' / 'scorm-kit' / 'bin' / 'scorm-kit.js')
+    str(Path.home() / 'AI_Space' / 'complete' / 'autonomous_lab' / 'scorm-kit' / 'bin' / 'scorm-kit.js')
 )
 NODE = os.environ.get('NODE_BIN', 'node')
 

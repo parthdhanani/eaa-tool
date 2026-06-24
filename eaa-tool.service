@@ -5,8 +5,8 @@ After=network.target
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/home/ubuntu/AI_Space/eaa_tool
-Environment=SCORM_KIT=/home/ubuntu/AI_Space/autonomous_lab/scorm-kit/bin/scorm-kit.js
+WorkingDirectory=/home/ubuntu/AI_Space/complete/eaa_tool
+Environment=SCORM_KIT=/home/ubuntu/AI_Space/complete/autonomous_lab/scorm-kit/bin/scorm-kit.js
 Environment=NODE_BIN=/usr/bin/node
 ExecStart=/home/ubuntu/.local/bin/gunicorn app:app \
   --workers 2 \
