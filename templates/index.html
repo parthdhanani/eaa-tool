@@ -18,7 +18,7 @@
   html{scroll-behavior:smooth}
   @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{animation:none!important;transition:none!important}}
   body{background:var(--paper);color:var(--ink);font-family:'Hanken Grotesk',sans-serif;
-    font-size:clamp(1rem,.96rem+.22vw,1.1rem);line-height:1.62;-webkit-font-smoothing:antialiased}
+    font-size:clamp(1rem,.96rem + .22vw,1.1rem);line-height:1.62;-webkit-font-smoothing:antialiased}
   .wrap{max-width:60rem;margin:0 auto;padding:0 clamp(1.3rem,5vw,3.4rem)}
   a{color:var(--terra)}
   ::selection{background:var(--terra);color:var(--paper)}
@@ -36,7 +36,7 @@
   main{padding:clamp(2.4rem,6vw,4.5rem) 0 4rem}
   .eyebrow{font-size:.82rem;letter-spacing:.15em;text-transform:uppercase;color:var(--terra);font-weight:600;margin-bottom:1.1rem}
   h1{font-family:'Hanken Grotesk',sans-serif;font-weight:400;letter-spacing:-.015em;
-    font-size:clamp(2.1rem,1.3rem+3.4vw,3.7rem);line-height:1.04;margin-bottom:1.2rem;max-width:18ch}
+    font-size:clamp(2.1rem,1.3rem + 3.4vw,3.7rem);line-height:1.04;margin-bottom:1.2rem;max-width:18ch}
   h1 em{font-style:normal;font-weight:800;color:var(--ink)}
   .lede{color:var(--soft);font-size:1.16rem;max-width:50ch;margin-bottom:2.4rem}
   .lede b{color:var(--ink);font-weight:600}
@@ -68,7 +68,7 @@
 
   .scorerow{display:grid;grid-template-columns:auto 1fr;gap:clamp(1.4rem,4vw,3rem);align-items:end;
     padding-bottom:1.6rem;border-bottom:2px solid var(--ink);margin-bottom:1.6rem}
-  .score .num{font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:clamp(3.6rem,2rem+8vw,6.2rem);line-height:.85;letter-spacing:-.02em}
+  .score .num{font-family:'Hanken Grotesk',sans-serif;font-weight:500;font-size:clamp(3.6rem,2rem + 8vw,6.2rem);line-height:.85;letter-spacing:-.02em}
   .score .num i{font-style:normal;font-size:.36em;color:var(--soft);font-weight:400}
   .score .verdict{font-family:'Hanken Grotesk',sans-serif;font-style:normal;font-size:1.3rem;margin-top:.5rem}
   .v-compliant{color:var(--ok)} .v-minor{color:var(--jade)} .v-work{color:var(--warn)} .v-bad{color:var(--bad)}
